@@ -1,0 +1,48 @@
+name: Docker Container Image Export for WSL
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+jobs:
+  docker_pull:
+    runs-on: ubuntu-latest
+    steps:
+      - id: version
+        run: echo "text=ver$(TZ=Asia/Tokyo date +%y%m%d%H%M)" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Create Tag
+        run: |
+          cd $GITHUB_WORKSPACE
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag ${{ steps.version.outputs.text }}
+          git push origin ${{ steps.version.outputs.text }}          
+
+      - name: Docker Build
+        run: docker build -t wslimg:latest .
+      
+      - name: Docker Run
+        run: docker run --name wslimg wslimg:latest
+
+      - name: Export Docker Image as Tarball
+        run: docker export wslimg -o wslimg.tar
+
+      - name: Upload Docker Image as Asset
+        uses: svenstaro/upload-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_name: ${{ steps.version.outputs.text }}
+          file: wslimg.tar
+          asset_name: wslimg-${{ steps.version.outputs.text }}.tar
+          tag: ${{ steps.version.outputs.text }}
+          body: "リリースしました🎉"
+          overwrite: true
+
+      - name: Cleanup Docker Container
+        run: docker rm wslimg
+
+      - name: Cleanup Docker Image
+        run: docker rmi wslimg:latest
