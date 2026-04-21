@@ -29,7 +29,7 @@ RUN cat <<EOF > /etc/wsl.conf
 default=wsluser
 
 [interop]
-appendWindowsPath=false
+appendWindowsPath=true
 
 [boot]
 command = "/usr/bin/env -i /usr/bin/unshare --pid --mount-proc --fork --propagation private -- sh -c 'exec /sbin/init'"
