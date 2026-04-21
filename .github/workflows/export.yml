@@ -2,6 +2,7 @@ name: Docker Container Image Export for WSL
 on:
   schedule:
     - cron: '0 0 1 * *'
+  workflow_dispatch:
 jobs:
   docker_pull:
     runs-on: ubuntu-latest
