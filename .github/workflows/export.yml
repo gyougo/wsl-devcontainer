@@ -4,7 +4,7 @@ on:
     - cron: '0 0 1 * *'
   workflow_dispatch:
 jobs:
-  docker_pull:
+  image-export:
     runs-on: ubuntu-latest
     steps:
       - id: version
@@ -15,7 +15,6 @@ jobs:
 
       - name: Create Tag
         run: |
-          cd $GITHUB_WORKSPACE
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git tag ${{ steps.version.outputs.text }}
