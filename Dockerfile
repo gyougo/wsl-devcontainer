@@ -68,3 +68,27 @@ if [ -f "$HOME/.openrc.env" ]; then
   rm "$HOME/.openrc.env"
 fi
 EOF
+
+# .bash_profile, .bashrc の設定
+RUN cat <<"EOF" > /root/.bash_profile
+# ~/.bash_profile
+
+# .bashrc を読み込む（macOSやSSHで必須）
+if [ -r ~/.bashrc ]; then
+    source ~/.bashrc
+fi
+EOF
+
+RUN cat <<"EOF" > /home/wsluser/.bash_profile
+# ~/.bash_profile
+
+# .bashrc を読み込む（macOSやSSHで必須）
+if [ -r ~/.bashrc ]; then
+    source ~/.bashrc
+fi
+EOF
+
+RUN cat <<"EOF" > /home/wsluser/.bashrc
+EOF
+
+RUN chown wsluser:wsluser /home/wsluser/.bash_profile /home/wsluser/.bashrc
